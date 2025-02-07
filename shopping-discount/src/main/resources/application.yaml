@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: shopping-discount
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSW}
