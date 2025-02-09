@@ -18,4 +18,9 @@ public class OrderRepositoryJpa implements OrderRepository {
     public OrderEntity findById(OrderId orderId) {
         return orderRepositorySpringDataJpa.findById(orderId).orElseThrow();
     }
+
+    @Override
+    public OrderEntity save(OrderEntity order) {
+        return orderRepositorySpringDataJpa.save(order);
+    }
 }

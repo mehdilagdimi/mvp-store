@@ -1,40 +1,63 @@
 package com.carrefour.mvp.shopping_discount.domain.Order;
 
-import com.carrefour.mvp.shopping_discount.domain.product.CategoryType;
-import com.carrefour.mvp.shopping_discount.domain.product.ProductEntity;
+import com.carrefour.mvp.shopping_discount.domain.discount.DiscountAggregate;
 import com.carrefour.mvp.shopping_discount.domain.product.ProductValObj;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.SequencedSet;
 import java.util.stream.Collectors;
 
 public class OrderAggregate {
-    private OrderAggregateId id;
-    private OrderEntity orderEntity;
-
+    private final OrderAggregateId id;
+    private final OrderEntity orderEntity;
+    private final DiscountAggregate discountAggregate;
     private SequencedSet<ProductValObj> productValObjs;
+    private Boolean isDiscounted;
 
-    public OrderAggregate(OrderEntity orderEntity){
+    public OrderAggregate(OrderEntity orderEntity, DiscountAggregate discountAggregate){
+        Objects.requireNonNull(orderEntity);
         this.id = new OrderAggregateId();
         this.orderEntity = orderEntity;
-        this.productValObjs = this.constructProductValObjs(orderEntity.getOrderItems());
+        this.discountAggregate = discountAggregate;
+        this.productValObjs = constructProductValObjs();
+        this.isDiscounted = false;
     }
 
-    OrderAggregate applyDiscount(OrderAggregate orderAggregate) {
-        return orderAggregate;
+    public OrderAggregate applyDiscount() {
+        this.isDiscounted = discountAggregate.applyDiscount(orderEntity.getOrderItems());
+        if(this.isDiscounted){
+            this.productValObjs = constructProductValObjs();
+        }
+        return this;
     }
 
-    SequencedSet<ProductValObj> constructProductValObjs(SequencedSet<OrderItemEntity> orderItems){
-        return orderItems
+    SequencedSet<ProductValObj> constructProductValObjs(){
+        return orderEntity
+                .getOrderItems()
                 .stream()
-                .map( order -> mapToProductValObj( order.getProduct()) )
+                .map( item -> mapToProductValObj( item ) )
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    private ProductValObj mapToProductValObj(ProductEntity productEntity){
+    private ProductValObj mapToProductValObj(OrderItemEntity item){
         return
                 new ProductValObj(
-                        CategoryType.valueOf( productEntity.getCategory().value() ),
-                        productEntity.getPrice());
+                        item.getItemName(),
+                        item.getPrice(),
+                        item.getQuantity(),
+                        item.getIsDiscounted());
+    }
+
+    public SequencedSet<ProductValObj> getItems(){
+        return this.productValObjs;
+    }
+
+    public Boolean wasOrderDiscounted() {
+        return isDiscounted;
+    }
+
+    public OrderEntity getOrderEntity() {
+        return orderEntity;
     }
 }

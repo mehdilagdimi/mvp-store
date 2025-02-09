@@ -6,5 +6,5 @@ import java.util.UUID;
 
 @Service
 public interface ApplyDiscount<T> {
-    T apply(UUID id);
+    T apply(UUID id, String discount);
 }

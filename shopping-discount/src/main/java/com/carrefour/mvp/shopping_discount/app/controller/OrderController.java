@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -13,7 +14,7 @@ import java.util.UUID;
 public class OrderController {
 
     @PostMapping(value = "/{id}/discount", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity discountOrder(@PathVariable UUID id){
+    public ResponseEntity discountOrder(@PathVariable UUID id, @RequestHeader(name = "X-DISCOUNT-CODE") String discountCode){
         return ResponseEntity.ok().build();
     }
 }
