@@ -2,6 +2,7 @@ package com.carrefour.mvp.shopping_discount.domain.Order;
 
 import com.carrefour.mvp.shopping_discount.domain.discount.DiscountAggregate;
 import com.carrefour.mvp.shopping_discount.domain.product.ProductValObj;
+import reactor.core.publisher.Mono;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -10,12 +11,12 @@ import java.util.stream.Collectors;
 
 public class OrderAggregate {
     private final OrderAggregateId id;
-    private final OrderEntity orderEntity;
+    private final Mono<OrderEntity> orderEntity;
     private final DiscountAggregate discountAggregate;
     private SequencedSet<ProductValObj> productValObjs;
     private Boolean isDiscounted;
 
-    public OrderAggregate(OrderEntity orderEntity, DiscountAggregate discountAggregate){
+    public OrderAggregate(Mono<OrderEntity> orderEntity, DiscountAggregate discountAggregate){
         Objects.requireNonNull(orderEntity);
         this.id = new OrderAggregateId();
         this.orderEntity = orderEntity;
@@ -24,20 +25,32 @@ public class OrderAggregate {
         this.isDiscounted = false;
     }
 
-    public OrderAggregate applyDiscount() {
-        this.isDiscounted = discountAggregate.applyDiscount(orderEntity.getOrderItems());
-        if(this.isDiscounted){
-            this.productValObjs = constructProductValObjs();
-        }
-        return this;
+    public Mono<OrderAggregate> applyDiscount() {
+           return orderEntity.
+                    flatMap(order ->
+                            discountAggregate.applyDiscount(order.getOrderItems())
+                                    .flatMap(isDiscounted -> {
+                                        this.isDiscounted = isDiscounted;
+                                        return
+                                                Mono.fromCallable(() -> constructProductValObjs())
+                                                        .map(products -> {
+                                                            this.productValObjs = products;
+                                                            return this;
+                                                        });
+
+                                    })
+                    );
     }
 
     SequencedSet<ProductValObj> constructProductValObjs(){
         return orderEntity
-                .getOrderItems()
-                .stream()
-                .map( item -> mapToProductValObj( item ) )
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .map(order ->
+                     order.getOrderItems()
+                            .stream()
+                            .map( item -> mapToProductValObj( item ) )
+                            .collect(Collectors.toCollection(LinkedHashSet::new)))
+                .block();
+
     }
 
     private ProductValObj mapToProductValObj(OrderItemEntity item){
@@ -58,6 +71,6 @@ public class OrderAggregate {
     }
 
     public OrderEntity getOrderEntity() {
-        return orderEntity;
+        return orderEntity.block();
     }
 }

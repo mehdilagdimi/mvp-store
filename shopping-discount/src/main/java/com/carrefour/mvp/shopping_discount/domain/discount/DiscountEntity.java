@@ -1,5 +1,6 @@
 package com.carrefour.mvp.shopping_discount.domain.discount;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -11,6 +12,7 @@ import java.util.SequencedSet;
 public class DiscountEntity {
     @EmbeddedId
     private DiscountId id;
+    @Embedded
     private DiscountCode code;
     private BigDecimal percentage;
     @OneToMany(mappedBy = "discount")

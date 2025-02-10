@@ -8,6 +8,7 @@ import com.carrefour.mvp.shopping_discount.domain.discount.DiscountAggregate;
 import com.carrefour.mvp.shopping_discount.domain.discount.DiscountEntity;
 import com.carrefour.mvp.shopping_discount.domain.discount.DiscountRepository;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
@@ -23,20 +24,23 @@ public class ApplyDiscountOnOrderUseCase implements ApplyDiscount {
     }
 
     @Override
-    public OrderAggregate apply(UUID orderId, String discountCode) {
+    public Mono<OrderAggregate> apply(UUID orderId, String discountCode) {
         OrderAggregate orderAggregate = getOrderAggregate(new OrderId(orderId), discountCode);
-        orderAggregate.applyDiscount();
-        if(orderAggregate.wasOrderDiscounted()){
-            orderRepository.save(orderAggregate.getOrderEntity());
-        }
-        return orderAggregate;
+        return orderAggregate
+                .applyDiscount()
+                .doOnSuccess(value -> {
+                        if(value.wasOrderDiscounted()){
+                            orderRepository.update(orderAggregate.getOrderEntity());
+                        }
+                })
+                .then(Mono.just(orderAggregate));
     }
 
     private OrderAggregate getOrderAggregate(OrderId orderId, String discountCode){
-        OrderEntity orderEntity =
+        Mono<OrderEntity> orderEntity =
                 orderRepository
                         .findById(orderId);
-        DiscountEntity discountEntity =
+        Mono<DiscountEntity> discountEntity =
                 discountRepository.findByCode(discountCode);
 
         DiscountAggregate discountAggregate = new DiscountAggregate(discountEntity);

@@ -1,6 +1,8 @@
 package com.carrefour.mvp.shopping_discount.domain.Order;
 
+import reactor.core.publisher.Mono;
+
 public interface OrderRepository {
-    OrderEntity findById(OrderId orderId);
-    OrderEntity save(OrderEntity order);
+    Mono<OrderEntity> findById(OrderId orderId);
+    Mono<OrderEntity> update(OrderEntity order);
 }
