@@ -21,3 +21,11 @@ You will need :
 4. Launch app by running run.sh script file in a shell (ex. gitbash):
    ```bash
    ./run.sh 
+
+
+## Details about this work
+   - Work started to be simple focusing on DDD, TDD and Hexagonal achitecutre with no reactive elements
+   - Migrating to reactive workflow and due to personal time limitation tests were no longer valid and shall be passed to build project
+   - Went with the assumption Hibernate reactive was integrated with Spring-data-r2dbc so considering time I had to use Hibernate Reactive only etc..
+   - Many options were available for architecture (strictly abiding by the rules or breaking some for practical use ...)
+   - Was an interesting exercice and shall continue working on it for knowledge purpose

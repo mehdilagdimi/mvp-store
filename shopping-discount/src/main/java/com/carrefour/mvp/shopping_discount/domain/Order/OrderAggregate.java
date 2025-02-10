@@ -2,6 +2,7 @@ package com.carrefour.mvp.shopping_discount.domain.Order;
 
 import com.carrefour.mvp.shopping_discount.domain.discount.DiscountAggregate;
 import com.carrefour.mvp.shopping_discount.domain.product.ProductValObj;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import reactor.core.publisher.Mono;
 
 import java.util.LinkedHashSet;
@@ -11,7 +12,9 @@ import java.util.stream.Collectors;
 
 public class OrderAggregate {
     private final OrderAggregateId id;
+    @JsonIgnore
     private final Mono<OrderEntity> orderEntity;
+    @JsonIgnore
     private final DiscountAggregate discountAggregate;
     private SequencedSet<ProductValObj> productValObjs;
     private Boolean isDiscounted;
