@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  app:
+    image: "${artifactId}:${version}"
+    container_name: shopping-discount-service
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USER: ${DB_USER}
+      DB_PASSW: ${DB_PASSW}
+      DB_SCHEMA_GENERATION: ${DB_SCHEMA_GENERATION}
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14
+    container_name: db
+    environment:
+      - POSTGRES_DB=shopping-discount
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSW}
+    ports:
+      - "5432:5432"
+

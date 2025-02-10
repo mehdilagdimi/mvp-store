@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .env
+/data/*
+!/data/.gitkeep
+
 ### STS ###
 .apt_generated
 .classpath

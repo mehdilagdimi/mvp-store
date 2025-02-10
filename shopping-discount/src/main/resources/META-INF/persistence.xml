@@ -6,34 +6,33 @@
     <persistence-unit name="shopping-discount">
         <provider>org.hibernate.reactive.provider.ReactivePersistenceProvider</provider>
 
-        <properties>
+<!--        <properties>-->
 
-            <!-- PostgreSQL -->
-            <property name="jakarta.persistence.jdbc.url"
-                      value="jdbc:postgresql://localhost/order-discount"/>
+<!--            &lt;!&ndash; PostgreSQL &ndash;&gt;-->
+<!--            <property name="jakarta.persistence.jdbc.url"-->
+<!--                      value="jdbc:postgresql://db:5432/shopping-discount"/>-->
 
-            <!-- Credentials -->
-            <property name="jakarta.persistence.jdbc.user"
-                      value="postgres"/>
-            <property name="jakarta.persistence.jdbc.password"
-                      value="1234"/>
+<!--            &lt;!&ndash; Credentials &ndash;&gt;-->
+<!--            <property name="jakarta.persistence.jdbc.user"-->
+<!--                      value="postgres"/>-->
+<!--            <property name="jakarta.persistence.jdbc.password"-->
+<!--                      value="1234"/>-->
 
-            <!-- The Vert.x SQL Client connection pool size -->
-            <property name="hibernate.connection.pool_size"
-                      value="10"/>
+<!--            &lt;!&ndash; The Vert.x SQL Client connection pool size &ndash;&gt;-->
+<!--            <property name="hibernate.connection.pool_size"-->
+<!--                      value="10"/>-->
 
-            <!-- Automatic schema export -->
-            <property name="jakarta.persistence.schema-generation.database.action"
-                      value="drop-and-create"/>
+<!--            &lt;!&ndash; Automatic schema export &ndash;&gt;-->
+<!--            <property name="jakarta.persistence.schema-generation.database.action"-->
+<!--                      value="drop-and-create"/>-->
 
-            <!-- SQL statement logging -->
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.format_sql" value="true"/>
-            <property name="hibernate.highlight_sql" value="true"/>
+<!--            &lt;!&ndash; SQL statement logging &ndash;&gt;-->
+<!--            <property name="hibernate.show_sql" value="true"/>-->
+<!--            <property name="hibernate.format_sql" value="true"/>-->
+<!--            <property name="hibernate.highlight_sql" value="true"/>-->
 
-        </properties>
+<!--        </properties>-->
 
     </persistence-unit>
-
 
 </persistence>

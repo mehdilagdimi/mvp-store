@@ -2,3 +2,8 @@ spring:
   application:
     name: shopping-discount
 
+db:
+  url: ${DB_URL}
+  user: ${DB_USER}
+  passw: ${DB_PASSW}
+  schema-generation: ${DB_SCHEMA_GENERATION}
