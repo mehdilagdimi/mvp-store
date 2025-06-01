@@ -1,1 +1,377 @@
-<p>checkout works!</p>
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-7xl mx-auto p-4 lg:flex lg:space-x-8">
+
+    <div class="w-full lg:w-2/3 space-y-6">
+      <nav
+        class="flex flex-wrap items-center text-gray-600 text-sm space-x-2"
+        aria-label="Breadcrumb"
+      >
+        <a routerLink="/order/basket" class="hover:text-gray-800">Basket</a>
+        <span>&gt;</span>
+        <span class="opacity-50 font-semibold">Payment &amp; Shipping</span>
+      </nav>
+
+      <section class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+        <button
+          class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 rounded-md flex items-center justify-center space-x-2"
+          type="button"
+        >
+          <img
+            src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png"
+            alt="PayPal Logo"
+            class="h-6"
+          />
+          <span>Pay with PayPal</span>
+        </button>
+      </section>
+
+      <div class="flex items-center space-x-2 text-gray-400">
+        <div class="flex-1 h-px bg-gray-300"></div>
+        <span class="whitespace-nowrap">OR</span>
+        <div class="flex-1 h-px bg-gray-300"></div>
+      </div>
+
+      <form
+        [formGroup]="form"
+        (ngSubmit)="placeOrder()"
+        class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 space-y-6"
+      >
+        <section class="space-y-2">
+          <h3 class="text-lg font-medium text-gray-700">
+            Contact Information
+          </h3>
+
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
+            <div class="w-full md:w-2/3">
+              <input
+                type="email"
+                formControlName="email"
+                placeholder="Email"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <div class="mt-1 text-red-500 text-sm" *ngIf="
+                f.email.touched && f.email.invalid
+              ">
+                <div *ngIf="f.email.errors?.['required']">
+                  Email is required.
+                </div>
+                <div *ngIf="f.email.errors?.['email']">
+                  Please enter a valid email address.
+                </div>
+              </div>
+            </div>
+
+            <a
+              routerLink="/login"
+              class="text-blue-600 font-bold hover:underline text-sm ml-0 md:ml-4"
+              >Already have an account? Log in</a
+            >
+          </div>
+        </section>
+
+        <hr class="border-gray-200" />
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium text-gray-700 mb-2">
+            Payment Details
+          </h3>
+
+          <div>
+            <input
+              type="text"
+              formControlName="cardNumber"
+              maxlength="16"
+              placeholder="Card Number"
+              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <div class="mt-1 text-red-500 text-sm" *ngIf="
+              f.cardNumber.touched && f.cardNumber.invalid
+            ">
+              <div *ngIf="f.cardNumber.errors?.['required']">
+                Card number is required.
+              </div>
+              <div *ngIf="f.cardNumber.errors?.['pattern']">
+                Card number must be 16 digits.
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+            <div class="flex-1">
+              <input
+                type="text"
+                formControlName="expiry"
+                placeholder="MM/YY"
+                maxlength="5"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <div class="mt-1 text-red-500 text-sm" *ngIf="
+                f.expiry.touched && f.expiry.invalid
+              ">
+                <div *ngIf="f.expiry.errors?.['required']">
+                  Expiry date is required.
+                </div>
+                <div *ngIf="f.expiry.errors?.['pattern']">
+                  Format must be MM/YY.
+                </div>
+              </div>
+            </div>
+
+            <div class="w-full md:w-1/4">
+              <input
+                type="text"
+                formControlName="cvv"
+                placeholder="CVV"
+                maxlength="3"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <div class="mt-1 text-red-500 text-sm" *ngIf="
+                f.cvv.touched && f.cvv.invalid
+              ">
+                <div *ngIf="f.cvv.errors?.['required']">
+                  CVV is required.
+                </div>
+                <div *ngIf="f.cvv.errors?.['pattern']">
+                  CVV must be 3 digits.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-gray-200" />
+
+        <section class="space-y-4">
+          <h3 class="text-lg font-medium text-gray-700">
+            Shipping Address
+          </h3>
+          <div>
+            <select
+              formControlName="country"
+              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              <option *ngFor="let c of countryOptions" [value]="c">
+                {{ c }}
+              </option>
+            </select>
+            <div class="mt-1 text-red-500 text-sm" *ngIf="
+              f.country.touched && f.country.invalid
+            ">
+              Country is required.
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <input
+                type="text"
+                formControlName="firstName"
+                placeholder="First name"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <div class="mt-1 text-red-500 text-sm" *ngIf="
+                f.firstName.touched && f.firstName.invalid
+              ">
+                First name is required.
+              </div>
+            </div>
+
+            <div>
+              <input
+                type="text"
+                formControlName="lastName"
+                placeholder="Last name"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <div class="mt-1 text-red-500 text-sm" *ngIf="
+                f.lastName.touched && f.lastName.invalid
+              ">
+                Last name is required.
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <input
+              type="text"
+              formControlName="address"
+              placeholder="Street and house number"
+              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <div class="mt-1 text-red-500 text-sm" *ngIf="
+              f.address.touched && f.address.invalid
+            ">
+              Address is required.
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <input
+                type="text"
+                formControlName="postalCode"
+                placeholder="Postal code"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <div class="mt-1 text-red-500 text-sm" *ngIf="
+                f.postalCode.touched && f.postalCode.invalid
+              ">
+                Postal code is required.
+              </div>
+            </div>
+
+            <div>
+              <input
+                type="text"
+                formControlName="city"
+                placeholder="City"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <div class="mt-1 text-red-500 text-sm" *ngIf="
+                f.city.touched && f.city.invalid
+              ">
+                City is required.
+              </div>
+            </div>
+
+            <div>
+              <select
+                formControlName="province"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="" disabled selected>Province</option>
+                <option *ngFor="let p of provinceOptions" [value]="p">
+                  {{ p }}
+                </option>
+              </select>
+              <div class="mt-1 text-red-500 text-sm" *ngIf="
+                f.province.touched && f.province.invalid
+              ">
+                Province is required.
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <input
+              type="tel"
+              formControlName="phone"
+              placeholder="Phone"
+              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <div class="mt-1 text-red-500 text-sm" *ngIf="
+              f.phone.touched && f.phone.invalid
+            ">
+              Phone is required.
+            </div>
+          </div>
+          <label class="inline-flex items-center space-x-2">
+            <input
+              type="checkbox"
+              formControlName="saveInfo"
+              class="form-checkbox h-4 w-4 text-blue-600"
+            />
+            <span class="text-sm text-gray-600">
+              Save this information for next time
+            </span>
+          </label>
+        </section>
+
+        <hr class="border-gray-200" />
+
+        <div class="flex items-center justify-between">
+          <a
+            routerLink="/cart"
+            class="text-red-500 hover:underline text-sm font-medium"
+            >&larr; Return to cart</a
+          >
+          <button
+            type="submit"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded shadow"
+          >
+            Continue
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <aside class="w-full lg:w-1/3 mt-8 lg:mt-0">
+      <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 space-y-6">
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium text-gray-700">Summary</h3>
+          <ul class="divide-y divide-gray-200">
+            <li
+              *ngFor="let item of cartItems"
+              class="flex items-center justify-between py-4"
+            >
+              <div class="flex items-center space-x-4">
+                <img
+                  [src]="item.imageUrl"
+                  [alt]="item.name"
+                  class="w-16 h-16 object-cover rounded"
+                />
+                <div class="space-y-1">
+                  <p class="text-gray-800 font-medium">{{ item.name }}</p>
+                  <p class="text-gray-500 text-sm">
+                    Qty: {{ item.quantity }}
+                  </p>
+                </div>
+              </div>
+              <div class="text-gray-800 font-semibold">
+                DH{{ (item.price * item.quantity) | number: '1.2-2' }}
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="space-y-2">
+          <label for="discount" class="sr-only">Discount code</label>
+          <div class="flex">
+            <input
+              id="discount"
+              (input)="onDiscountCode($event.target.value)"
+              type="text"
+              placeholder="Discount Code"
+              class="flex-1 px-3 py-2 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <button
+              type="button"
+              (click)="applyDiscount()"
+              class="px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium border border-gray-300 rounded-r"
+            >
+              Apply
+            </button>
+          </div>
+        </div>
+
+        <hr class="border-gray-200" />
+
+        <div class="space-y-2 text-gray-700">
+          <div class="flex justify-between">
+            <span>Subtotal</span>
+            <span>DH{{ subtotal | number: '1.2-2' }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Shipping</span>
+            <span class="italic text-gray-500">{{ shippingFee }}</span>
+          </div>
+          <div class="flex justify-between mt-2">
+            <span class="font-semibold text-gray-800">Total</span>
+            <span class="font-semibold text-gray-800">
+              DH{{ total | number: '1.2-2' }}
+            </span>
+          </div>
+        </div>
+
+        <hr class="border-gray-200" />
+
+        <div class="text-gray-600 text-sm">
+          <p class="font-medium text-gray-800 mb-2">Local Shipping</p>
+          <ul class="list-disc list-inside space-y-1">
+            <li>Orders dispatched within 1–2 days</li>
+            <li>Easy Returns</li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
