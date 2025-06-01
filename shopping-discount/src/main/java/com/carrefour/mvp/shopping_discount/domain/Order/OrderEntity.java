@@ -15,7 +15,7 @@ import jakarta.persistence.OneToMany;
 
 import java.math.BigDecimal;
 import java.util.Objects;
-import java.util.SequencedSet;
+import java.util.Set;
 
 @Entity
 public class OrderEntity {
@@ -30,12 +30,12 @@ public class OrderEntity {
     @AttributeOverride(name = "value", column = @Column(name = "shipping-address"))
     private ShippingAdress shippingAdress;
     @OneToMany(mappedBy = "order")
-    private SequencedSet<OrderItemEntity> orderItems;
+    private Set<OrderItemEntity> orderItems;
     private BigDecimal discountPercentage;
 
     OrderEntity(){}
 
-    public OrderEntity(CustomerEntity customer, ShippingAdress shippingAdress, SequencedSet<OrderItemEntity> orderItems) {
+    public OrderEntity(CustomerEntity customer, ShippingAdress shippingAdress, Set<OrderItemEntity> orderItems) {
         Objects.requireNonNull(customer);
         Objects.requireNonNull(shippingAdress);
         Objects.requireNonNull(orderItems);
@@ -51,7 +51,7 @@ public class OrderEntity {
 
     }
 
-    public SequencedSet<OrderItemEntity> getOrderItems() {
+    public Set<OrderItemEntity> getOrderItems() {
         return orderItems;
     }
 

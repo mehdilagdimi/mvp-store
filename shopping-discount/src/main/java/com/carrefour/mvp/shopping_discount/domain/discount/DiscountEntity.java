@@ -1,33 +1,35 @@
 package com.carrefour.mvp.shopping_discount.domain.discount;
 
-import jakarta.persistence.Embedded;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
 import java.math.BigDecimal;
-import java.util.SequencedSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Entity
 public class DiscountEntity {
-    @EmbeddedId
-    private DiscountId id;
-    @Embedded
-    private DiscountCode code;
+    @Id
+    private UUID id;
+//    @Embedded
+    private String code;
     private BigDecimal percentage;
     @OneToMany(mappedBy = "discount")
-    private SequencedSet<DiscountRestrictionEntity> discountRestrictions;
+    private Set<DiscountRestrictionEntity> discountRestrictions;
 
-    public DiscountEntity(BigDecimal percentage, SequencedSet<DiscountRestrictionEntity> discountRestrictions) {
+    DiscountEntity () {};
+
+    public DiscountEntity(BigDecimal percentage, Set<DiscountRestrictionEntity> discountRestrictions) {
         if (percentage == null || percentage.compareTo(BigDecimal.ZERO) < 0 || percentage.compareTo(BigDecimal.ONE) > 1) {
             throw new IllegalArgumentException("Discount percentage must be between 0 and 1");
         }
-        this.id = new DiscountId();
+        this.id = new DiscountId().id();
         this.percentage = percentage;
         this.discountRestrictions = discountRestrictions;
     }
 
-    public SequencedSet<DiscountRestrictionEntity> getDiscountRestrictions() {
+    public Set<DiscountRestrictionEntity> getDiscountRestrictions() {
         return discountRestrictions;
     }
 

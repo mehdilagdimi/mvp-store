@@ -2,28 +2,28 @@ package com.carrefour.mvp.shopping_discount.domain.Order;
 
 import com.carrefour.mvp.shopping_discount.domain.product.ProductEntity;
 import com.carrefour.mvp.shopping_discount.domain.product.ProductName;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 public class OrderItemEntity {
-    @EmbeddedId
-    private OrderItemId id;
+    @Id
+    private UUID id;
     @ManyToOne
     @JoinColumn(name = "order_id")
     private OrderEntity order;
     @OneToOne
     @JoinColumn(name = "product_id")
     private ProductEntity product;
-    @Embedded
-    private ProductName productName;
+//    @Embedded
+    private String name;
     private BigDecimal price;
     private Integer quantity;
     private Boolean discounted;
@@ -35,11 +35,11 @@ public class OrderItemEntity {
         Objects.requireNonNull(price);
         Objects.requireNonNull(productName);
         Objects.requireNonNull(quantity);
-        this.id = new OrderItemId();
+        this.id = new OrderItemId().id();
         this.product = product;
         this.price = price;
         this.quantity = quantity;
-        this.productName = productName;
+        this.name = productName.name();
         this.discounted = false;
     }
 
@@ -52,7 +52,7 @@ public class OrderItemEntity {
     }
 
     public ProductName getItemName() {
-        return productName;
+        return new ProductName(name);
     }
 
     public void setDiscountedPrice(BigDecimal price) {

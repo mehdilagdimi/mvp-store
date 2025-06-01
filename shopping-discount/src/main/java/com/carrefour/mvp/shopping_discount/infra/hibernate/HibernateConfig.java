@@ -35,14 +35,14 @@ public class HibernateConfig {
         properties.put("jakarta.persistence.jdbc.user", user);
         properties.put("jakarta.persistence.jdbc.password", passw);
         properties.put("jakarta.persistence.schema-generation.database.action", schema_generation);
-//        properties.put("jakarta.persistence.create-database-schemas", true);
-//        properties.put("jakarta.persistence.schema-generation.create-source", "metadata-then-script");
-//        properties.put("jakarta.persistence.schema-generation.create-script-source", "classpath:data.sql");
+        properties.put("hibernate.hbm2ddl.import_files", "data.sql");
+        properties.put(
+                "jakarta.persistence.sql-load-script-source",
+                "classpath:data.sql");
         properties.put("hibernate.connection.pool_size", 10);
         properties.put("hibernate.show_sql", "true");
         properties.put("hibernate.format_sql", "true");
         properties.put("hibernate.highlight_sql", "true");
-
         return properties;
     }
 

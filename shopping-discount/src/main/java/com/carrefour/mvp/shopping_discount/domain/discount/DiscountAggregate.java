@@ -2,56 +2,49 @@ package com.carrefour.mvp.shopping_discount.domain.discount;
 
 import com.carrefour.mvp.shopping_discount.domain.Order.OrderItemEntity;
 import com.carrefour.mvp.shopping_discount.domain.discount.rulesengine.DiscountRulesEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.SequencedSet;
+import java.util.Set;
+import java.util.function.Predicate;
 
 public class DiscountAggregate{
     private final DiscountAggregateId id;
-    private final Mono<DiscountEntity> discountEntity;
-    private Boolean isDiscounted;
-
-    public DiscountAggregate(Mono<DiscountEntity> discountEntity) {
+    private final DiscountEntity discountEntity;
+    private boolean isDiscountApplied;
+    private static final Logger log = LoggerFactory.getLogger(DiscountAggregate.class);
+    public DiscountAggregate(DiscountEntity discountEntity) {
         this.id = new DiscountAggregateId();
         this.discountEntity = discountEntity;
-        this.isDiscounted = false;
+        this.isDiscountApplied = false;
     }
 
-    public Mono<Boolean> applyDiscount(SequencedSet<OrderItemEntity> items ){
-        final Mono<BigDecimal> discountPercentage = discountEntity.map(d -> d.getDiscountPercentage());
+    public Mono<Boolean> applyDiscount(Set<OrderItemEntity> items ){
+        final BigDecimal discountPercentage = discountEntity.getDiscountPercentage();
 
-        return Mono.just(items)
-                .flatMapMany(Flux::fromIterable)
-                .flatMap(item ->  discountEntity.flatMap(d -> {
-                        return Flux.fromIterable(d.getDiscountRestrictions())
-                                .filter(restriction -> DiscountRulesEngine.applyRules(item, restriction))
-                                .take(1)
-                                .next()
-                                .map(restriction -> true)
-                                .defaultIfEmpty(false);
-                    })
-                    .map( isRestricted -> {
+        return Flux.fromIterable(items)
+                .flatMap(item -> {
+                            Predicate<DiscountRestrictionEntity> predic = (restriction) -> DiscountRulesEngine.applyRules(item, restriction);
+                            boolean isRestricted = discountEntity.getDiscountRestrictions().stream().anyMatch(predic);
+                            log.info("is Restricted ? {}", isRestricted);
                             if (!isRestricted) {
                                 apply(item, discountPercentage);
                             }
-                            return this.isDiscounted;
-                        }))
-                .then(Mono.just(this.isDiscounted));
+                            return Mono.just(!isRestricted);
+                        })
+                .any(Boolean::booleanValue);
     }
 
-    public void apply(OrderItemEntity item, Mono<BigDecimal> discountPercentage){
-        this.isDiscounted = true;
-        discountPercentage.map(percentage -> {
-            BigDecimal discountedPrice =
-                    item.getPrice()
-                            .subtract( item.getPrice().multiply( percentage )).setScale(2, RoundingMode.HALF_UP);
-            item.setDiscountedPrice( discountedPrice );
-            item.flagAsDiscounted();
-            return discountedPrice;
-        });
+    public void apply(OrderItemEntity item, BigDecimal discountPercentage){
+        BigDecimal discountedPrice =
+                item.getPrice()
+                        .subtract( item.getPrice().multiply( discountPercentage.movePointLeft(2) )).setScale(2, RoundingMode.HALF_UP);
+        item.setDiscountedPrice( discountedPrice );
+        item.flagAsDiscounted();
     }
 
     void getDiscountPercentage(){};

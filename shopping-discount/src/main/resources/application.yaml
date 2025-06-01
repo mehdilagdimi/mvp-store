@@ -1,7 +1,9 @@
 spring:
   application:
     name: shopping-discount
-
+  sql:
+    init:
+      mode: always
 db:
   url: ${DB_URL}
   user: ${DB_USER}

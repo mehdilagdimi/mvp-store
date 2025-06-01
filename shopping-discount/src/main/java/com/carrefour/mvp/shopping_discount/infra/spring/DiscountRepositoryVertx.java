@@ -4,6 +4,7 @@ import com.carrefour.mvp.shopping_discount.domain.discount.DiscountEntity;
 import com.carrefour.mvp.shopping_discount.domain.discount.DiscountRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Root;
 import org.hibernate.reactive.mutiny.Mutiny;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class DiscountRepositoryVertx implements DiscountRepository {
         CriteriaBuilder criteriaBuilder = this.sessionFactory.getCriteriaBuilder();
         CriteriaQuery<DiscountEntity> query = criteriaBuilder.createQuery(DiscountEntity.class);
         Root<DiscountEntity> root = query.from(DiscountEntity.class);
+        root.fetch("discountRestrictions", JoinType.LEFT);
         query.select(root).where(criteriaBuilder.equal(root.get("code"), code));
         return
                 sessionFactory

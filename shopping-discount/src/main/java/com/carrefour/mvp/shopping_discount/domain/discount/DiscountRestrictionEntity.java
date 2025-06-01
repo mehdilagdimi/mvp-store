@@ -3,19 +3,20 @@ package com.carrefour.mvp.shopping_discount.domain.discount;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 public class DiscountRestrictionEntity {
-    @EmbeddedId
-    private DiscountRestrictionId id;
+    @Id
+    private UUID id;
     @Enumerated(EnumType.STRING)
     private RestrictionType type;
     @Embedded
@@ -25,11 +26,13 @@ public class DiscountRestrictionEntity {
     @JoinColumn(name = "discount_id")
     private DiscountEntity discount;
 
+    DiscountRestrictionEntity(){}
+
     public DiscountRestrictionEntity(RestrictionType type, DiscountEntity discount, Restriction restriction) {
         Objects.requireNonNull(type);
         Objects.requireNonNull(discount);
         Objects.requireNonNull(restriction);
-        this.id = new DiscountRestrictionId();
+        this.id = new DiscountRestrictionId().id();
         this.type = type;
         this.discount = discount;
         this.restriction = restriction;

@@ -7,6 +7,8 @@ import com.carrefour.mvp.shopping_discount.domain.Order.OrderRepository;
 import com.carrefour.mvp.shopping_discount.domain.discount.DiscountAggregate;
 import com.carrefour.mvp.shopping_discount.domain.discount.DiscountEntity;
 import com.carrefour.mvp.shopping_discount.domain.discount.DiscountRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -17,6 +19,7 @@ public class ApplyDiscountOnOrderUseCase implements ApplyDiscount {
 
     private final OrderRepository orderRepository;
     private final DiscountRepository discountRepository;
+    static Logger log = LoggerFactory.getLogger(ApplyDiscountOnOrderUseCase.class);
 
     ApplyDiscountOnOrderUseCase(final OrderRepository orderRepository, final  DiscountRepository discountRepository){
         this.orderRepository = orderRepository;
@@ -25,26 +28,35 @@ public class ApplyDiscountOnOrderUseCase implements ApplyDiscount {
 
     @Override
     public Mono<OrderAggregate> apply(UUID orderId, String discountCode) {
-        OrderAggregate orderAggregate = getOrderAggregate(new OrderId(orderId), discountCode);
-        return orderAggregate
-                .applyDiscount()
-                .doOnSuccess(value -> {
-                        if(value.wasOrderDiscounted()){
-                            orderRepository.update(orderAggregate.getOrderEntity());
-                        }
-                })
-                .then(Mono.just(orderAggregate));
+        return getOrderAggregate(new OrderId(orderId), discountCode)
+                .flatMap(aggre ->
+                    aggre.applyDiscount()
+                            .flatMap(updatedAggr -> {
+                                        if(updatedAggr.wasOrderDiscounted()){
+                                            orderRepository.update(updatedAggr.getOrderEntity());
+                                        }
+                                        return Mono.just(updatedAggr);
+                            })
+                );
     }
 
-    private OrderAggregate getOrderAggregate(OrderId orderId, String discountCode){
+    private Mono<OrderAggregate> getOrderAggregate(OrderId orderId, String discountCode){
         Mono<OrderEntity> orderEntity =
                 orderRepository
-                        .findById(orderId);
+                        .findByIdWithItems(orderId);
         Mono<DiscountEntity> discountEntity =
                 discountRepository.findByCode(discountCode);
 
-        DiscountAggregate discountAggregate = new DiscountAggregate(discountEntity);
+        return Mono
+                .zip(orderEntity, discountEntity)
+                .map(t -> {
+                    OrderEntity order = t.getT1();
+                    DiscountEntity discount = t.getT2();
 
-        return new OrderAggregate(orderEntity, discountAggregate);
+                    log.info("Order in : {}", order);
+                    log.info("discount in : {}", discount );
+                    return new OrderAggregate(order, new DiscountAggregate(discount));
+                });
+
     }
 }

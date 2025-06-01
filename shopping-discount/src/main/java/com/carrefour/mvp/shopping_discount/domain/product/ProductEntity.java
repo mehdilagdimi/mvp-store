@@ -4,30 +4,33 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 public class ProductEntity {
-    @EmbeddedId
-    private ProductId id;
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "category"))
-    private Category category;
-    @Embedded
-    private ProductName name;
+    @Id
+    private UUID id;
+//    @Embedded
+//    @AttributeOverride(name = "value", column = @Column(name = "category"))
+    private String category;
+//    @Embedded
+    private String name;
     private BigDecimal price;
+
+    ProductEntity(){}
 
     public ProductEntity(Category category, BigDecimal price, ProductName name) {
         Objects.requireNonNull(category);
         Objects.requireNonNull(price);
         Objects.requireNonNull(name);
-        this.id = new ProductId();
-        this.category = category;
+        this.id = new ProductId().id();
+        this.category = category.value();
         this.price = price;
-        this.name = name;
+        this.name = name.name();
     }
 
     public Category getCategory() {
-        return category;
+        return new Category( category );
     }
 
     public BigDecimal getPrice() {
@@ -35,6 +38,6 @@ public class ProductEntity {
     }
 
     public ProductName getProductName() {
-        return name;
+        return new ProductName(name);
     }
 }
