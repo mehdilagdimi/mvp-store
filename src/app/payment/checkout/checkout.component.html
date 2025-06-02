@@ -328,7 +328,7 @@
           <div class="flex">
             <input
               id="discount"
-              (input)="onDiscountCode($event.target.value)"
+              [(ngModel)]="discountCode"
               type="text"
               placeholder="Discount Code"
               class="flex-1 px-3 py-2 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-blue-400"

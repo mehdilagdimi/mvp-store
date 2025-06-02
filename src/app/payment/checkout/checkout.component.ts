@@ -1,16 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
-interface CartItem {
-  id: number;
-  name: string;
-  variant: string;
-  price: number;
-  quantity: number;
-  imageUrl: string;
-}
+import { CartItem } from '../data-realm/cart-item';
+import { PaymentService } from '../data-realm/payment.service';
 
 @Component({
   selector: 'app-checkout',
@@ -18,7 +11,8 @@ interface CartItem {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterModule
+    FormsModule,
+    RouterModule,
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css'
@@ -26,23 +20,24 @@ interface CartItem {
 export class CheckoutComponent {
     cartItems: CartItem[] = [
       {
-        id: 1,
-        name: 'Hair Trimmer',
-        variant: 'A2',
-        price: 85.0,
+        id: 'a8098c1a-f86e-11da-bd1a-00112444be1e',
+        orderId:'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+        name: 'Samsung',
+        price: 9999.99,
         quantity: 1,
         imageUrl: '',
       },
       {
-        id: 2,
-        name: 'Black Tea',
-        variant: 'M',
-        price: 45.5,
+        id: 'c56a4180-65aa-42ec-a945-5fd21dec0538',
+        orderId: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+        name: 'Chair',
+        price: 49.99,
         quantity: 2,
         imageUrl: '',
       },
     ];
 
+    private readonly paymentService = inject(PaymentService);
     form: FormGroup;
     discountCode: string = '';
     discountApplied: boolean = false;
@@ -83,7 +78,6 @@ export class CheckoutComponent {
       return this.form.controls;
     }
 
-    // ————— Calculated Totals —————
     get subtotal(): number {
       return this.cartItems.reduce(
         (sum, item) => sum + item.price * item.quantity,
@@ -100,12 +94,10 @@ export class CheckoutComponent {
       return Math.round((this.subtotal + shippingCost) * 100) / 100;
     }
 
-    onDiscountCode(value : string){
-      this.discountCode = value;
-    }
 
     applyDiscount(): void {
-      //call backend
+      this.paymentService.applyDiscount(this.discountCode, this.cartItems[0].orderId)
+        .subscribe();
     }
 
     placeOrder(): void {
