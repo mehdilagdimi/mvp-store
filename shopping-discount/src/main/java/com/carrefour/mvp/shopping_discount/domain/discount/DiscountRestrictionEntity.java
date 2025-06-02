@@ -30,7 +30,6 @@ public class DiscountRestrictionEntity {
 
     public DiscountRestrictionEntity(RestrictionType type, DiscountEntity discount, Restriction restriction) {
         Objects.requireNonNull(type);
-        Objects.requireNonNull(discount);
         Objects.requireNonNull(restriction);
         this.id = new DiscountRestrictionId().id();
         this.type = type;

@@ -32,10 +32,8 @@ public class DiscountAggregate{
                             Predicate<DiscountRestrictionEntity> predic = (restriction) -> DiscountRulesEngine.applyRules(item, restriction);
                             boolean isRestricted = discountEntity.getDiscountRestrictions().stream().anyMatch(predic);
                             log.info("is Restricted ? {}", isRestricted);
-                            if (!isRestricted) {
-                                apply(item, discountPercentage);
-                            }
-                            return !isRestricted; })
+                            return !isRestricted;
+                        })
                 .doOnNext(item -> apply(item, discountPercentage))
                 .hasElements();
     }
