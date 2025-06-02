@@ -16,7 +16,7 @@ public class OrderRouter {
   @Bean
   public RouterFunction<ServerResponse> route(OrderHandler orderHandler) {
     return RouterFunctions
-      .route(POST("/order/{id}/discount"),
+      .route(POST("/api/v1/order/{id}/discount"),
               request -> {
                 UUID id = UUID.fromString(request.pathVariable("id"));
                 String discountCode = request.headers().header("X-DISCOUNT-CODE").get(0);
