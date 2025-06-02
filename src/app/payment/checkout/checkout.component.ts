@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, effect, EffectRef, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CartItem } from '../data-realm/cart-item';
@@ -18,27 +18,10 @@ import { PaymentService } from '../data-realm/payment.service';
   styleUrl: './checkout.component.css'
 })
 export class CheckoutComponent {
-    cartItems: CartItem[] = [
-      {
-        id: 'a8098c1a-f86e-11da-bd1a-00112444be1e',
-        orderId:'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-        name: 'Samsung',
-        price: 9999.99,
-        quantity: 1,
-        imageUrl: '',
-      },
-      {
-        id: 'c56a4180-65aa-42ec-a945-5fd21dec0538',
-        orderId: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-        name: 'Chair',
-        price: 49.99,
-        quantity: 2,
-        imageUrl: '',
-      },
-    ];
+    readonly paymentService = inject(PaymentService);
 
-    private readonly paymentService = inject(PaymentService);
     form: FormGroup;
+    cartItems : CartItem[] = [];
     discountCode: string = '';
     discountApplied: boolean = false;
 
@@ -73,6 +56,7 @@ export class CheckoutComponent {
         phone: ['', Validators.required]
       });
     }
+
 
     get f() {
       return this.form.controls;
@@ -138,4 +122,5 @@ export class CheckoutComponent {
         saveInfo: false,
       });
     }
+
 }

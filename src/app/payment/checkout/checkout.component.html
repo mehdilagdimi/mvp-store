@@ -300,7 +300,7 @@
           <h3 class="text-lg font-medium text-gray-700">Summary</h3>
           <ul class="divide-y divide-gray-200">
             <li
-              *ngFor="let item of cartItems"
+              *ngFor="let item of paymentService.items()"
               class="flex items-center justify-between py-4"
             >
               <div class="flex items-center space-x-4">
@@ -317,7 +317,7 @@
                 </div>
               </div>
               <div class="text-gray-800 font-semibold">
-                DH{{ (item.price * item.quantity) | number: '1.2-2' }}
+                DH{{ (item.discountedPrice * item.quantity) | number: '1.2-2' }}
               </div>
             </li>
           </ul>
