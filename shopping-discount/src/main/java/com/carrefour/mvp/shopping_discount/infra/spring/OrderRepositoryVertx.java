@@ -1,8 +1,9 @@
 package com.carrefour.mvp.shopping_discount.infra.spring;
 
-import com.carrefour.mvp.shopping_discount.domain.Order.OrderEntity;
-import com.carrefour.mvp.shopping_discount.domain.Order.OrderId;
-import com.carrefour.mvp.shopping_discount.domain.Order.OrderRepository;
+import com.carrefour.mvp.shopping_discount.domain.order.OrderEntity;
+import com.carrefour.mvp.shopping_discount.domain.order.OrderId;
+import com.carrefour.mvp.shopping_discount.domain.order.OrderRepository;
+import com.carrefour.mvp.shopping_discount.domain.order.exception.OrderNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.hibernate.reactive.mutiny.Mutiny;
 import org.springframework.stereotype.Service;
@@ -55,7 +56,7 @@ public class OrderRepositoryVertx implements OrderRepository {
                         .setParameter("orderIdParam", orderId)
                         .getSingleResultOrNull())
                 .onItem().ifNull().failWith(() ->
-                        new EntityNotFoundException(" Order Id : " + orderId ))
+                        new OrderNotFoundException( orderId.id() ))
                 .convert().with(toMono());
         }
 

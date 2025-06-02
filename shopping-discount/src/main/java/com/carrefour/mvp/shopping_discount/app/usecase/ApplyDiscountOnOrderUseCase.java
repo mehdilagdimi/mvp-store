@@ -1,9 +1,9 @@
 package com.carrefour.mvp.shopping_discount.app.usecase;
 
-import com.carrefour.mvp.shopping_discount.domain.Order.OrderAggregate;
-import com.carrefour.mvp.shopping_discount.domain.Order.OrderEntity;
-import com.carrefour.mvp.shopping_discount.domain.Order.OrderId;
-import com.carrefour.mvp.shopping_discount.domain.Order.OrderRepository;
+import com.carrefour.mvp.shopping_discount.domain.order.OrderAggregate;
+import com.carrefour.mvp.shopping_discount.domain.order.OrderEntity;
+import com.carrefour.mvp.shopping_discount.domain.order.OrderId;
+import com.carrefour.mvp.shopping_discount.domain.order.OrderRepository;
 import com.carrefour.mvp.shopping_discount.domain.discount.DiscountAggregate;
 import com.carrefour.mvp.shopping_discount.domain.discount.DiscountEntity;
 import com.carrefour.mvp.shopping_discount.domain.discount.DiscountRepository;
@@ -33,7 +33,9 @@ public class ApplyDiscountOnOrderUseCase implements ApplyDiscount {
                     aggre.applyDiscount()
                             .flatMap(updatedAggr -> {
                                         if(updatedAggr.wasOrderDiscounted()){
-                                            orderRepository.update(updatedAggr.getOrderEntity());
+                                            orderRepository
+                                                    .update(updatedAggr.getOrderEntity())
+                                                    .thenReturn(updatedAggr);
                                         }
                                         return Mono.just(updatedAggr);
                             })
@@ -52,7 +54,6 @@ public class ApplyDiscountOnOrderUseCase implements ApplyDiscount {
                 .map(t -> {
                     OrderEntity order = t.getT1();
                     DiscountEntity discount = t.getT2();
-
                     log.info("Order in : {}", order);
                     log.info("discount in : {}", discount );
                     return new OrderAggregate(order, new DiscountAggregate(discount));

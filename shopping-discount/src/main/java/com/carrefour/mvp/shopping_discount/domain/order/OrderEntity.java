@@ -1,4 +1,4 @@
-package com.carrefour.mvp.shopping_discount.domain.Order;
+package com.carrefour.mvp.shopping_discount.domain.order;
 
 import com.carrefour.mvp.shopping_discount.domain.customer.CustomerEntity;
 import com.carrefour.mvp.shopping_discount.domain.product.ShippingAdress;

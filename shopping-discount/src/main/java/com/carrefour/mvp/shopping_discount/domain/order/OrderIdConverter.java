@@ -1,4 +1,4 @@
-package com.carrefour.mvp.shopping_discount.domain.Order;
+package com.carrefour.mvp.shopping_discount.domain.order;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

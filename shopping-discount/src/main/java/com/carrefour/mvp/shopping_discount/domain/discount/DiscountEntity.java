@@ -12,7 +12,6 @@ import java.util.UUID;
 public class DiscountEntity {
     @Id
     private UUID id;
-//    @Embedded
     private String code;
     private BigDecimal percentage;
     @OneToMany(mappedBy = "discount")

@@ -10,10 +10,7 @@ import java.util.UUID;
 public class ProductEntity {
     @Id
     private UUID id;
-//    @Embedded
-//    @AttributeOverride(name = "value", column = @Column(name = "category"))
     private String category;
-//    @Embedded
     private String name;
     private BigDecimal price;
 

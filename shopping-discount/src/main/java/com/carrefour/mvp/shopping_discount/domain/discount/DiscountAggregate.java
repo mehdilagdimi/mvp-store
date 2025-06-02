@@ -1,6 +1,6 @@
 package com.carrefour.mvp.shopping_discount.domain.discount;
 
-import com.carrefour.mvp.shopping_discount.domain.Order.OrderItemEntity;
+import com.carrefour.mvp.shopping_discount.domain.order.OrderItemEntity;
 import com.carrefour.mvp.shopping_discount.domain.discount.rulesengine.DiscountRulesEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,16 +27,17 @@ public class DiscountAggregate{
         final BigDecimal discountPercentage = discountEntity.getDiscountPercentage();
 
         return Flux.fromIterable(items)
-                .flatMap(item -> {
+                .filter(
+                        item -> {
                             Predicate<DiscountRestrictionEntity> predic = (restriction) -> DiscountRulesEngine.applyRules(item, restriction);
                             boolean isRestricted = discountEntity.getDiscountRestrictions().stream().anyMatch(predic);
                             log.info("is Restricted ? {}", isRestricted);
                             if (!isRestricted) {
                                 apply(item, discountPercentage);
                             }
-                            return Mono.just(!isRestricted);
-                        })
-                .any(Boolean::booleanValue);
+                            return !isRestricted; })
+                .doOnNext(item -> apply(item, discountPercentage))
+                .hasElements();
     }
 
     public void apply(OrderItemEntity item, BigDecimal discountPercentage){

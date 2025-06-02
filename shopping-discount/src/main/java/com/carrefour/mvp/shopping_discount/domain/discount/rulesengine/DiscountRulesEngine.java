@@ -1,6 +1,6 @@
 package com.carrefour.mvp.shopping_discount.domain.discount.rulesengine;
 
-import com.carrefour.mvp.shopping_discount.domain.Order.OrderItemEntity;
+import com.carrefour.mvp.shopping_discount.domain.order.OrderItemEntity;
 import com.carrefour.mvp.shopping_discount.domain.discount.DiscountRestrictionEntity;
 
 import java.util.LinkedHashSet;

@@ -1,4 +1,4 @@
-package com.carrefour.mvp.shopping_discount.domain.Order;
+package com.carrefour.mvp.shopping_discount.domain.order;
 
 import com.carrefour.mvp.shopping_discount.domain.product.ProductEntity;
 import com.carrefour.mvp.shopping_discount.domain.product.ProductName;
@@ -22,7 +22,6 @@ public class OrderItemEntity {
     @OneToOne
     @JoinColumn(name = "product_id")
     private ProductEntity product;
-//    @Embedded
     private String name;
     private BigDecimal price;
     private Integer quantity;

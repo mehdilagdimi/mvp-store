@@ -2,6 +2,7 @@ package com.carrefour.mvp.shopping_discount.infra.spring;
 
 import com.carrefour.mvp.shopping_discount.domain.discount.DiscountEntity;
 import com.carrefour.mvp.shopping_discount.domain.discount.DiscountRepository;
+import com.carrefour.mvp.shopping_discount.domain.discount.exception.DiscountNotFoundException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.JoinType;
@@ -33,7 +34,10 @@ public class DiscountRepositoryVertx implements DiscountRepository {
                         .withSession(
                                 session ->
                                         session.createQuery(query).getSingleResult())
-                                        .convert()
-                                        .with(toMono());
+                        .convert()
+                        .with(toMono())
+                        .flatMap(Mono::justOrEmpty)
+                        .switchIfEmpty(Mono.error(
+                                new DiscountNotFoundException(code)));
     }
 }

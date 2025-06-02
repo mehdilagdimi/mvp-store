@@ -1,4 +1,4 @@
-package com.carrefour.mvp.shopping_discount.domain.Order;
+package com.carrefour.mvp.shopping_discount.domain.order;
 
 import java.util.Objects;
 import java.util.UUID;
